@@ -287,4 +287,4 @@ When implementing JWT authentication in Django, it's essential to follow best pr
 
 ## Conclusion and Further Resources
 
-Django JWT authentication offers a flexible and secure solution for implementing authentication and authorization in Django projects. By understanding the concepts of JWT authentication, configuring Django settings, and implementing token generation and validation mechanisms, developers can build robust and secure APIs. For further resources and advanced topics on Django JWT authentication, refer to the official Django documentation and community resources.
+Django JWT authentication offers a flexible and secure solution for implementing authentication and authorization in Django projects. By understanding the concepts of JWT authentication, configuring Django settings, and implementing token generation and validation mechanisms, developers can build robust and secure APIs. For further resources and advanced topics on Django JWT authentication, refer to the [official Django documentation](https://docs.djangoproject.com/en/stable/) and [community resources](https://stackoverflow.com/questions/tagged/django+jwt).
