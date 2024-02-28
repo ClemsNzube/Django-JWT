@@ -214,7 +214,72 @@ By implementing token refresh mechanisms in Django JWT, you can provide users wi
 
 ## Token Revocation Strategies
 
-In some scenarios, it may be necessary to revoke JWT tokens to invalidate access for specific users or sessions. Django JWT authentication provides options for implementing token revocation strategies, such as using blacklists or storing token metadata to track token usage and revoke tokens as needed.
+Token revocation strategies are essential for managing security and access control in systems that rely on JWT authentication. These strategies allow you to revoke JWT tokens to invalidate access for specific users or sessions. While Django JWT does not natively support token revocation, you can implement custom revocation strategies using various techniques, such as token blacklisting or storing token metadata. Let's explore some common token revocation strategies:
+
+### Token Blacklisting
+
+Token blacklisting involves maintaining a list of revoked tokens on the server. When a token needs to be revoked (e.g., due to a user logout or session termination), the token's unique identifier (e.g., JWT ID or jti) is added to the blacklist. Subsequently, when a token is presented for authentication, the server checks if the token's identifier is present in the blacklist. If the identifier is found, the token is considered revoked, and authentication fails.
+
+#### Implementation Example:
+
+```python
+# Pseudocode for Token Blacklisting
+
+blacklisted_tokens = set()
+
+# When a token needs to be revoked
+def revoke_token(token_id):
+    blacklisted_tokens.add(token_id)
+
+# During token validation
+def validate_token(token):
+    token_id = extract_token_id(token)
+    if token_id in blacklisted_tokens:
+        raise TokenRevokedError()
+```
+
+### Storing Token Metadata
+
+Instead of maintaining a simple blacklist, you can store additional metadata associated with each token, such as the token's creation time, expiration time, user ID, etc. When a token needs to be revoked, you update its metadata accordingly. During token validation, the server checks the token's metadata to determine if it has been revoked.
+
+#### Implementation Example:
+
+```python
+# Pseudocode for Storing Token Metadata
+
+revoked_tokens = {}
+
+# When a token needs to be revoked
+def revoke_token(token_id):
+    revoked_tokens[token_id] = {'revoked': True}
+
+# During token validation
+def validate_token(token):
+    token_metadata = get_token_metadata(token)
+    if token_metadata.get('revoked', False):
+        raise TokenRevokedError()
+```
+
+### Expiration-Based Revocation
+
+Instead of maintaining a blacklist or storing token metadata, you can rely on token expiration to effectively revoke tokens. By setting a short expiration time for tokens (e.g., minutes or hours), you can automatically invalidate tokens after they expire. Users must then obtain new tokens by re-authenticating, effectively revoking their previous tokens.
+
+#### Implementation Example:
+
+```python
+# Pseudocode for Expiration-Based Revocation
+
+# Configure short expiration time for tokens
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=15),
+}
+```
+
+### Hybrid Approaches
+
+You can also combine multiple revocation strategies for added flexibility and security. For example, you might use token blacklisting for immediate revocation of specific tokens (e.g., due to a security incident) and rely on expiration-based revocation for general token management.
+
+By implementing token revocation strategies in Django JWT, you can enhance the security of your application by effectively managing access control and mitigating potential security risks associated with compromised or unauthorized tokens. Choose the revocation strategy that best suits your application's security requirements and operational needs.
 
 ## Best Practices and Security Considerations
 
